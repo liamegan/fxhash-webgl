@@ -91,7 +91,7 @@ const frag = `#version 300 es
   
   mat3 t, t2, t3;
   
-  const float layers = 10.;
+  const float layers = 20.;
   const float zoomSpeed = 5.;
   const float zoomDepth = 4.;
   const float rscale = 5.;
@@ -106,7 +106,7 @@ const frag = `#version 300 es
     uv -= halfRepeat;
     uv = mod(uv, repeat) - halfRepeat;
 
-    vec3 hash = hash33(vec3(id, i));
+    vec3 hash = hash33(vec3(id, i)*1024.);
     float s = floor(hash.x * 4.);
     float c = floor(hash.x * 4.);
     
