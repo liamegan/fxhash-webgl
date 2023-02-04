@@ -150,40 +150,6 @@ const frag = `#version 300 es
     colour = mix(colour, col, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
 
 
-    // float field2 = sdCross(transform(uv, t2) + vec2(.4, -.0), vec2(.23*.5, .1*.5), 0.);
-    // float field3 = sdEquilateralTriangle(transform(uv, t3) * 7. + vec2(-3.5, 1)) / 7.;
-    // float field4 = sdChevron(transform(uv, t3) * 2. + vec2(-.3, -.4), vec2(.2))*.5;
-    
-    // // float bokeh = smoothstep(-.2, .5, scale);
-    // float bokeh = smoothstep(-.1, -4., scale) + smoothstep(-.2, 1., scale) * .5;
-    // float aa = fwidth(field)+bokeh;
-    // float glowwidth = .02+bokeh;
-    // float glow_opacity = .15;
-    
-    // colour = mix(colour, yellow, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    // float glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*5.*glow_opacity;
-    // colour = mix(colour, yellow, glow);
-    
-    // field = field2;
-    
-    // // colour = mix(colour, vec3(0), step(field, 0.));
-    // colour = mix(colour, blue*.7, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    // colour = mix(colour, blue, glow);
-    
-    // field = field3;
-    
-    // colour = mix(colour, green, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    // colour = mix(colour, green, glow);
-    
-    // field = field4;
-    
-    // colour = mix(colour, pink, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    // colour = mix(colour, pink, glow);
-    
-
     return vec4(colour, length(colour*1.5));
   }
   
