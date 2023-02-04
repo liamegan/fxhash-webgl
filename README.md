@@ -5,7 +5,7 @@ This repository is meant to provide the barest of bare-bones setups for webgl pr
 - Documentation
 - Examples
 - Explanations of functionality
-- Add basic webserver for development
+- Add basic webserver for development - for now, please use `http-server .`
 
 ## How to use
 - Clone the project `npx degit liamegan/fxhash-webgl your_project_name`
