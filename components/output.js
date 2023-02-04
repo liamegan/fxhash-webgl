@@ -41,7 +41,10 @@ const render = (gl, delta) => {
   ]);
 
   // Render the output
-  components.renderer.render(gl.canvas.width, gl.canvas.height);
+  components.renderer.render({
+    width: gl.canvas.width,
+    height: gl.canvas.height,
+  });
 };
 
 export {

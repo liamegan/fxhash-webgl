@@ -43,7 +43,7 @@ const render = (gl, delta) => {
   components.renderer.bindUniform("u_resolution", [w, h]);
 
   // Render the scene
-  components.renderer.render(w, h);
+  components.renderer.render({ width: w, height: h });
 
   // Swap the read/write buffers
   components.fb.swap();
