@@ -26,6 +26,13 @@ const init = (gl) => {
     type: gl.FLOAT,
     internalFormat: gl.RGBA32F,
   });
+  
+  const resize = () => {
+    setTimeout(() => {
+      components.fb.resize(cfg.width, cfg.height);
+    }, 10)
+  };
+  window.addEventListener("resize", resize);
 
   return components;
 };
