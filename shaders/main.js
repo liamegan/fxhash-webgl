@@ -83,65 +83,105 @@ const frag = `#version 300 es
       float res = exp(-k*a) + exp(-k*b);
       return -log(res)/k;
   }
+  vec3 hash33(vec3 p3) {
+    p3 = fract(p3 * vec3(.1031, .1030, .0973));
+    p3 += dot(p3, p3.yxz+33.33);
+    return fract((p3.xxy + p3.yxx)*p3.zyx);
+  }
   
   mat3 t, t2, t3;
   
   const float layers = 10.;
   const float zoomSpeed = 5.;
   const float zoomDepth = 4.;
+  const float rscale = 5.;
   const float repeat = 1.3;
   const float halfRepeat = repeat*.5;
   
   vec4 layer(in vec2 uv, float scale, float i) {
     
     uv *= zoomDepth;
+    uv *= rscale;
+    vec2 id = floor(uv / repeat);
     uv -= halfRepeat;
     uv = mod(uv, repeat) - halfRepeat;
+
+    vec3 hash = hash33(vec3(id, i));
+    float s = floor(hash.x * 4.);
+    float c = floor(hash.x * 4.);
     
     vec3 colour = vec3(0);
-    
-    vec2[] poly = vec2[](
-      transform(p1,t),
-      transform(p2,t),
-      transform(p3,t),
-      transform(p4,t),
-      transform(p5,t),
-      transform(p6,t),
-      transform(p7,t));
-    
-    float field = sdPolygon(poly, uv * 2. - vec2(.3, .2))/2.;
-    float field2 = sdCross(transform(uv, t2) + vec2(.4, -.0), vec2(.23*.5, .1*.5), 0.);
-    float field3 = sdEquilateralTriangle(transform(uv, t3) * 7. + vec2(-3.5, 1)) / 7.;
-    float field4 = sdChevron(transform(uv, t3) * 2. + vec2(-.3, -.4), vec2(.2))*.5;
-    
+    vec3 col;
+
+    float field;
+    if(s == 0.) {
+      vec2[] poly = vec2[](
+        transform(p1,t),
+        transform(p2,t),
+        transform(p3,t),
+        transform(p4,t),
+        transform(p5,t),
+        transform(p6,t),
+        transform(p7,t));
+      field = sdPolygon(poly, uv*2.-.5)/2.;
+    } else if(s == 1.) {
+      field = sdCross(uv-.5, vec2(.23*.5, .1*.5), 0.);
+    } else if(s == 2.) {
+      field = sdEquilateralTriangle(transform(uv, t3) * 7. + vec2(-3.5, 1)) / 7.;
+    } else if(s == 3.) {
+      field = sdChevron(uv * 2. + vec2(-.3, -.4), vec2(.2))*.5;
+    }
+    if(c == 0.) {
+      col = yellow;
+    } else if(c == 1.) {
+      col = blue;
+    } else if(c == 2.) {
+      col = green;
+    } else if(c == 3.) {
+      col = pink;
+    }
+
     // float bokeh = smoothstep(-.2, .5, scale);
     float bokeh = smoothstep(-.1, -4., scale) + smoothstep(-.2, 1., scale) * .5;
     float aa = fwidth(field)+bokeh;
     float glowwidth = .02+bokeh;
     float glow_opacity = .15;
+
+    colour = mix(colour, col, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
+
+
+    // float field2 = sdCross(transform(uv, t2) + vec2(.4, -.0), vec2(.23*.5, .1*.5), 0.);
+    // float field3 = sdEquilateralTriangle(transform(uv, t3) * 7. + vec2(-3.5, 1)) / 7.;
+    // float field4 = sdChevron(transform(uv, t3) * 2. + vec2(-.3, -.4), vec2(.2))*.5;
     
-    colour = mix(colour, yellow, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    float glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*5.*glow_opacity;
-    colour = mix(colour, yellow, glow);
+    // // float bokeh = smoothstep(-.2, .5, scale);
+    // float bokeh = smoothstep(-.1, -4., scale) + smoothstep(-.2, 1., scale) * .5;
+    // float aa = fwidth(field)+bokeh;
+    // float glowwidth = .02+bokeh;
+    // float glow_opacity = .15;
     
-    field = field2;
+    // colour = mix(colour, yellow, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
+    // float glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*5.*glow_opacity;
+    // colour = mix(colour, yellow, glow);
     
-    // colour = mix(colour, vec3(0), step(field, 0.));
-    colour = mix(colour, blue*.7, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    colour = mix(colour, blue, glow);
+    // field = field2;
     
-    field = field3;
+    // // colour = mix(colour, vec3(0), step(field, 0.));
+    // colour = mix(colour, blue*.7, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
+    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
+    // colour = mix(colour, blue, glow);
     
-    colour = mix(colour, green, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    colour = mix(colour, green, glow);
+    // field = field3;
     
-    field = field4;
+    // colour = mix(colour, green, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
+    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
+    // colour = mix(colour, green, glow);
     
-    colour = mix(colour, pink, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
-    glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
-    colour = mix(colour, pink, glow);
+    // field = field4;
+    
+    // colour = mix(colour, pink, smoothstep(.001 + aa, 0.001 - aa, field) - smoothstep(-.001 + aa, -0.001 - aa, field));
+    // glow = (smoothstep(.001 + glowwidth, 0.001 - glowwidth, field) - smoothstep(-.001 + glowwidth, -0.001 - glowwidth, field))*7.*glow_opacity;
+    // colour = mix(colour, pink, glow);
     
 
     return vec4(colour, length(colour*1.5));
