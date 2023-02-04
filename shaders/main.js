@@ -95,7 +95,7 @@ const frag = `#version 300 es
   const float zoomSpeed = 5.;
   const float zoomDepth = 4.;
   const float rscale = 5.;
-  const float repeat = 1.3;
+  const float repeat = 1.;
   const float halfRepeat = repeat*.5;
   
   vec4 layer(in vec2 uv, float scale, float i) {
@@ -127,7 +127,7 @@ const frag = `#version 300 es
     } else if(s == 1.) {
       field = sdCross(uv-.5, vec2(.23*.5, .1*.5), 0.);
     } else if(s == 2.) {
-      field = sdEquilateralTriangle(transform(uv, t3) * 7. + vec2(-3.5, 1)) / 7.;
+      field = sdEquilateralTriangle(transform(uv, t3) * 8. + vec2(-3.5, 0)) / 7.;
     } else if(s == 3.) {
       field = sdChevron(uv * 2. + vec2(-.3, -.4), vec2(.2))*.5;
     }
